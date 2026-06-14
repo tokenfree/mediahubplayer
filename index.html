@@ -1299,205 +1299,186 @@
         }
     }
 
-    /* 2026 monochrome focused refresh */
+    /* ── Vercel-style design layer ── */
     :root {
         color-scheme: dark;
-        --black: #000;
-        --white: #fff;
-        --paper: #000;
-        --label: #fff;
-        --secondary-label: rgba(255, 255, 255, 0.62);
-        --tertiary-label: rgba(255, 255, 255, 0.38);
-        --separator: rgba(255, 255, 255, 0.16);
-        --material: rgba(255, 255, 255, 0.105);
-        --material-strong: rgba(10, 10, 10, 0.78);
-        --control-fill: rgba(255, 255, 255, 0.12);
-        --control-fill-hover: rgba(255, 255, 255, 0.2);
-        --control-fill-active: rgba(255, 255, 255, 0.28);
-        --accent: #fff;
-        --accent-hover: #f1f1f1;
-        --accent-pressed: #d9d9d9;
-        --top-safe: clamp(86px, 11vh, 118px);
-        --bottom-safe: clamp(154px, 18vh, 194px);
-        --radius-btn: 999px;
-        --radius-shell: 8px;
-        --shadow-soft: 0 26px 88px rgba(0, 0, 0, 0.76);
-        --shadow-panel: 0 26px 80px rgba(0, 0, 0, 0.72);
-    }
-
-    @media (prefers-color-scheme: dark) {
-        :root {
-            --paper: #000;
-            --label: #fff;
-            --secondary-label: rgba(255, 255, 255, 0.62);
-            --tertiary-label: rgba(255, 255, 255, 0.38);
-            --separator: rgba(255, 255, 255, 0.16);
-            --material: rgba(255, 255, 255, 0.105);
-            --material-strong: rgba(10, 10, 10, 0.78);
-            --control-fill: rgba(255, 255, 255, 0.12);
-            --control-fill-hover: rgba(255, 255, 255, 0.2);
-            --control-fill-active: rgba(255, 255, 255, 0.28);
-            --stage-top: #000;
-            --stage-bottom: #000;
-            --shadow-soft: 0 26px 88px rgba(0, 0, 0, 0.76);
-            --shadow-panel: 0 26px 80px rgba(0, 0, 0, 0.72);
-        }
+        --v-bg:          #000;
+        --v-surface:     #0a0a0a;
+        --v-surface-2:   #111;
+        --v-border:      rgba(255, 255, 255, 0.1);
+        --v-border-hi:   rgba(255, 255, 255, 0.18);
+        --v-label:       #ededed;
+        --v-label-muted: rgba(255, 255, 255, 0.44);
+        --v-label-dim:   rgba(255, 255, 255, 0.26);
+        --v-fill:        rgba(255, 255, 255, 0.07);
+        --v-fill-hover:  rgba(255, 255, 255, 0.12);
+        --v-fill-active: rgba(255, 255, 255, 0.18);
+        --v-accent:      #ededed;
+        --v-accent-fg:   #000;
+        --v-radius:      6px;
+        --top-safe:      clamp(86px, 11vh, 118px);
+        --bottom-safe:   clamp(154px, 18vh, 194px);
+        /* override earlier tokens */
+        --radius-btn:    var(--v-radius);
+        --radius-shell:  var(--v-radius);
     }
 
     body {
-        background: #000;
-        color: #fff;
-        font-size: 16px;
+        background: var(--v-bg);
+        color: var(--v-label);
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Geist", "Inter", "Segoe UI", sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+        -webkit-font-smoothing: antialiased;
     }
 
     button:focus-visible,
     input:focus-visible,
     .playlist-item:focus-visible {
-        outline: 2px solid rgba(255, 255, 255, 0.88);
-        outline-offset: 4px;
+        outline: 1.5px solid rgba(255, 255, 255, 0.7);
+        outline-offset: 3px;
+        border-radius: var(--v-radius);
     }
 
+    /* ── App shell ── */
     .app-shell {
         min-height: 100vh;
         display: block;
-        background: #000;
+        background: var(--v-bg);
     }
 
+    /* ── Floating bars — sharp, layered Vercel style ── */
     .top-bar,
     .bottom-bar {
         position: fixed;
         left: 50%;
         z-index: 10;
-        color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        background: rgba(0, 0, 0, 0.76);
+        color: var(--v-label);
+        /* layered surface: base color + 1px inner top highlight + 1px outer border */
+        background: rgba(10, 10, 10, 0.82);
+        border: 1px solid var(--v-border-hi);
         box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.22),
-            inset 0 -1px 0 rgba(255, 255, 255, 0.06),
-            0 24px 80px rgba(0, 0, 0, 0.72);
+            /* inner top highlight — the Vercel "layer edge" */
+            inset 0 1px 0 rgba(255, 255, 255, 0.14),
+            /* ambient depth */
+            0 8px 32px rgba(0, 0, 0, 0.56),
+            0 2px 8px rgba(0, 0, 0, 0.32);
+        backdrop-filter: blur(20px) saturate(160%);
+        -webkit-backdrop-filter: blur(20px) saturate(160%);
         transition: opacity 180ms ease, transform 180ms ease, width 180ms ease;
-        backdrop-filter: blur(28px) saturate(170%);
-        -webkit-backdrop-filter: blur(28px) saturate(170%);
     }
 
+    /* remove pseudo-element lines from earlier layers */
+    .top-bar::before, .top-bar::after,
+    .bottom-bar::before, .bottom-bar::after { display: none; }
+
     .top-bar {
-        top: 18px;
-        right: 18px;
+        top: 16px;
+        right: 16px;
         left: auto;
-        width: 68px;
-        min-height: 68px;
+        width: 48px;
+        min-height: 48px;
         justify-content: center;
-        padding: 7px;
-        border-radius: 999px;
+        padding: 4px;
+        border-radius: var(--v-radius);
         transform: none;
     }
 
     .bottom-bar {
-        bottom: 18px;
-        width: min(1060px, calc(100vw - 28px));
-        min-height: 124px;
+        bottom: 16px;
+        width: min(1020px, calc(100vw - 32px));
+        min-height: 112px;
         flex-direction: column;
         justify-content: center;
-        gap: 12px;
-        padding: 17px clamp(16px, 3vw, 28px);
-        border-radius: 30px;
+        gap: 10px;
+        padding: 14px clamp(14px, 2.4vw, 24px);
+        border-radius: var(--v-radius);
         transform: translateX(-50%);
     }
 
-    .top-bar::before,
-    .bottom-bar::before {
-        display: none;
-    }
-
-    .top-bar::after,
-    .bottom-bar::after {
-        display: none;
-    }
-
+    /* ── Brand hidden (no brand in top-bar) ── */
     .brand,
     .brand-text,
     .brand-title,
-    .brand-subtitle {
-        display: none;
-    }
+    .brand-subtitle { display: none; }
 
     .top-actions {
         position: relative;
         z-index: 1;
-        gap: 8px;
+        gap: 4px;
     }
 
+    /* ── Buttons — Vercel flat style ── */
     .icon-button,
     .transport-button {
-        width: 52px;
-        height: 52px;
-        min-width: 52px;
-        min-height: 52px;
-        border: 1px solid rgba(255, 255, 255, 0.16);
-        background: rgba(255, 255, 255, 0.1);
-        color: #fff;
-        box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.2),
-            0 10px 30px rgba(0, 0, 0, 0.32);
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        min-height: 40px;
+        border-radius: var(--v-radius);
+        border: 1px solid var(--v-border);
+        background: var(--v-fill);
+        color: var(--v-label);
+        box-shadow: none;
+        transition: background 100ms ease, border-color 100ms ease, transform 80ms ease, opacity 120ms ease;
     }
 
     .transport-button {
-        width: 58px;
-        height: 58px;
+        width: 44px;
+        height: 44px;
     }
 
     .transport-button.primary {
-        width: 74px;
-        height: 74px;
-        background: #fff;
-        color: #000;
-        border-color: rgba(255, 255, 255, 0.82);
+        width: 56px;
+        height: 56px;
+        background: var(--v-accent);
+        color: var(--v-accent-fg);
+        border-color: rgba(255, 255, 255, 0.28);
         box-shadow:
-            inset 0 1px 0 #fff,
-            inset 0 -1px 0 rgba(0, 0, 0, 0.16),
-            0 20px 46px rgba(255, 255, 255, 0.17),
-            0 22px 52px rgba(0, 0, 0, 0.62);
+            inset 0 1px 0 rgba(255, 255, 255, 0.6),
+            0 4px 16px rgba(255, 255, 255, 0.08),
+            0 2px 8px rgba(0, 0, 0, 0.4);
     }
 
     .icon-button:hover,
     .transport-button:hover {
-        background: rgba(255, 255, 255, 0.18);
-        border-color: rgba(255, 255, 255, 0.28);
-        box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.26),
-            0 14px 36px rgba(0, 0, 0, 0.42);
+        background: var(--v-fill-hover);
+        border-color: var(--v-border-hi);
+        box-shadow: none;
     }
 
     .transport-button.primary:hover {
         background: #fff;
+        border-color: rgba(255, 255, 255, 0.4);
         box-shadow:
-            inset 0 1px 0 #fff,
-            inset 0 -1px 0 rgba(0, 0, 0, 0.12),
-            0 24px 54px rgba(255, 255, 255, 0.22),
-            0 24px 58px rgba(0, 0, 0, 0.7);
+            inset 0 1px 0 rgba(255, 255, 255, 0.7),
+            0 6px 20px rgba(255, 255, 255, 0.12);
     }
 
     .icon-button:active,
     .transport-button:active {
-        transform: scale(0.94);
-        background: rgba(255, 255, 255, 0.24);
+        transform: scale(0.96);
+        background: var(--v-fill-active);
     }
 
     .transport-button.primary:active {
-        background: #e8e8e8;
+        background: #ddd;
+        transform: scale(0.96);
     }
+
+    .icon-button:disabled,
+    .transport-button:disabled { opacity: 0.3; }
 
     .icon {
-        width: 23px;
-        height: 23px;
-        stroke-width: 2;
+        width: 16px;
+        height: 16px;
+        stroke-width: 1.8;
     }
 
-    .transport-button.primary .icon {
-        width: 28px;
-        height: 28px;
-    }
+    .transport-button .icon        { width: 18px; height: 18px; }
+    .transport-button.primary .icon { width: 22px; height: 22px; }
 
+    /* ── Player zone ── */
     .player-zone {
         position: fixed;
         inset: 0;
@@ -1505,78 +1486,100 @@
         display: grid;
         place-items: center;
         padding: var(--top-safe) clamp(14px, 2vw, 28px) var(--bottom-safe);
-        background: transparent;
+        background: var(--v-bg);
     }
 
+    /* ── Video shell — Vercel card: sharp corners, layered borders ── */
     .video-shell {
         width: min(calc(100vw - clamp(28px, 4vw, 56px)), calc((100vh - var(--top-safe) - var(--bottom-safe)) * 16 / 9));
         max-width: 1760px;
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: var(--v-radius);
+        /* Vercel layered border: outer glow stripe + sharp border */
+        border: 1px solid var(--v-border-hi);
         background: #000;
         box-shadow:
-            inset 0 0 0 1px rgba(255, 255, 255, 0.05),
-            0 0 0 1px rgba(0, 0, 0, 0.74),
-            0 36px 120px rgba(0, 0, 0, 0.84);
+            /* inner layer highlight */
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            /* outer ambient */
+            0 0 0 1px rgba(0, 0, 0, 0.6),
+            0 24px 80px rgba(0, 0, 0, 0.72);
+        overflow: hidden;
     }
 
     .video-frame {
         background: #000;
+        border-radius: inherit;
     }
 
+    /* ── Empty state ── */
     .empty-state {
-        background: #000;
+        background: var(--v-bg);
     }
 
     .empty-panel {
         width: auto;
-        min-width: min(330px, calc(100% - 36px));
-        border: 0;
-        background: transparent;
-        padding: 0;
-        box-shadow: none;
+        min-width: min(300px, calc(100% - 36px));
+        border: 1px solid var(--v-border-hi);
+        border-radius: var(--v-radius);
+        background: var(--v-surface);
+        padding: 32px 28px;
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            0 8px 32px rgba(0, 0, 0, 0.5);
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
     }
 
     .empty-title {
-        display: none;
+        display: block;
+        margin-bottom: 20px;
+        color: var(--v-label);
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0;
+        text-transform: none;
     }
 
+    /* ── Choose videos button — Vercel primary button ── */
     .load-large {
-        width: min(330px, calc(100vw - 70px));
-        height: 66px;
-        border: 1px solid rgba(255, 255, 255, 0.74);
-        border-radius: 999px;
-        background: #fff;
-        color: #000;
-        font-size: 18px;
-        font-weight: 700;
+        width: min(280px, calc(100vw - 70px));
+        height: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        border-radius: var(--v-radius);
+        background: var(--v-accent);
+        color: var(--v-accent-fg);
+        font-size: 13px;
+        font-weight: 500;
         box-shadow:
-            inset 0 1px 0 #fff,
-            inset 0 -1px 0 rgba(0, 0, 0, 0.14),
-            0 22px 60px rgba(255, 255, 255, 0.18),
-            0 24px 80px rgba(0, 0, 0, 0.72);
+            inset 0 1px 0 rgba(255, 255, 255, 0.6),
+            0 2px 8px rgba(0, 0, 0, 0.3);
+        transition: background 100ms ease, box-shadow 100ms ease, transform 80ms ease;
     }
 
     .load-large:hover {
         background: #fff;
         box-shadow:
-            inset 0 1px 0 #fff,
-            inset 0 -1px 0 rgba(0, 0, 0, 0.1),
-            0 26px 70px rgba(255, 255, 255, 0.23),
-            0 28px 88px rgba(0, 0, 0, 0.78);
+            inset 0 1px 0 rgba(255, 255, 255, 0.7),
+            0 4px 12px rgba(255, 255, 255, 0.1);
     }
 
+    .load-large:active {
+        transform: scale(0.98);
+        background: #ddd;
+    }
+
+    /* ── Loading line ── */
     .loading-line {
-        height: 3px;
-        background: rgba(255, 255, 255, 0.1);
+        height: 2px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 0;
     }
 
     .loading-line::before {
-        background: linear-gradient(90deg, transparent, #fff, transparent);
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
     }
 
+    /* ── Meta row ── */
     .meta-row,
     .control-row {
         position: relative;
@@ -1586,255 +1589,282 @@
 
     .meta-row {
         grid-template-columns: minmax(0, 1fr) auto;
-        min-height: 20px;
+        min-height: 18px;
+        /* Vercel: horizontal rule below meta */
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--v-border);
+        margin-bottom: 2px;
     }
 
     .track-title {
-        color: rgba(255, 255, 255, 0.88);
-        font-size: 15px;
-        font-weight: 650;
+        color: var(--v-label);
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0;
+        text-transform: none;
     }
 
     .counter,
     .time-label {
-        color: rgba(255, 255, 255, 0.56);
-        font-size: 13px;
-        font-weight: 600;
+        color: var(--v-label-muted);
+        font-size: 11px;
+        font-weight: 400;
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum" 1;
     }
 
+    /* ── Control row ── */
     .control-row {
-        grid-template-columns: auto minmax(260px, 1fr) auto;
-        gap: clamp(14px, 2.6vw, 28px);
+        grid-template-columns: auto minmax(220px, 1fr) auto;
+        gap: clamp(12px, 2vw, 20px);
     }
 
-    .control-cluster {
-        gap: 12px;
-    }
+    .control-cluster { gap: 6px; }
 
+    /* ── Timeline ── */
     .timeline {
-        grid-template-columns: 58px minmax(0, 1fr) 58px;
-        gap: 14px;
+        grid-template-columns: 46px minmax(0, 1fr) 46px;
+        gap: 10px;
     }
 
-    input[type="range"] {
-        height: 34px;
-    }
+    input[type="range"] { height: 28px; }
 
+    /* Progress track — Vercel uses thin, sharp lines */
     #progress::-webkit-slider-runnable-track {
-        height: 7px;
-        border-radius: 999px;
-        background: linear-gradient(90deg, #fff var(--range, 0%), rgba(255, 255, 255, 0.18) var(--range, 0%));
-        box-shadow:
-            inset 0 1px 2px rgba(0, 0, 0, 0.44),
-            0 1px 0 rgba(255, 255, 255, 0.08);
+        height: 3px;
+        border-radius: 0;
+        background: linear-gradient(90deg, var(--v-accent) var(--range, 0%), var(--v-border-hi) var(--range, 0%));
+        box-shadow: none;
     }
 
     #progress::-webkit-slider-thumb {
-        width: 22px;
-        height: 22px;
-        margin-top: -7.5px;
-        border: 1px solid rgba(255, 255, 255, 0.78);
-        background: linear-gradient(180deg, #fff, #d8d8d8);
-        box-shadow:
-            inset 0 1px 0 #fff,
-            0 4px 16px rgba(0, 0, 0, 0.5);
+        width: 14px;
+        height: 14px;
+        margin-top: -5.5px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: var(--v-radius);
+        background: var(--v-surface-2);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+        transition: transform 80ms ease;
     }
 
     #progress:hover::-webkit-slider-thumb {
-        transform: scale(1.09);
-        box-shadow:
-            inset 0 1px 0 #fff,
-            0 7px 20px rgba(0, 0, 0, 0.62);
+        transform: scale(1.15);
+        border-color: rgba(255, 255, 255, 0.7);
+        background: var(--v-label);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
     }
 
     #progress::-moz-range-track {
-        height: 7px;
-        background: rgba(255, 255, 255, 0.18);
+        height: 3px;
+        border-radius: 0;
+        background: var(--v-border-hi);
     }
 
     #progress::-moz-range-progress {
-        height: 7px;
-        background: #fff;
+        height: 3px;
+        border-radius: 0;
+        background: var(--v-accent);
     }
 
     #progress::-moz-range-thumb {
-        width: 22px;
-        height: 22px;
-        border: 1px solid rgba(255, 255, 255, 0.78);
-        background: linear-gradient(180deg, #fff, #d8d8d8);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+        width: 14px;
+        height: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: var(--v-radius);
+        background: var(--v-surface-2);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
     }
 
+    /* ── Volume ── */
     .volume-group {
-        grid-template-columns: auto minmax(98px, 144px) auto;
-        gap: 12px;
+        grid-template-columns: auto minmax(88px, 120px) auto;
+        gap: 8px;
     }
 
     .volume-track-wrap {
-        height: 7px;
-        background: rgba(255, 255, 255, 0.18);
-        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.44);
+        height: 3px;
+        border-radius: 0;
+        background: var(--v-border-hi);
+        box-shadow: none;
     }
 
     .volume-fill {
-        background: #fff;
+        border-radius: 0;
+        background: var(--v-accent);
     }
 
+    /* ── Playlist panel — Vercel side sheet ── */
     .playlist-panel {
         top: 0;
         bottom: 0;
-        width: min(430px, 92vw);
-        padding-top: 14px;
-        border-left: 1px solid rgba(255, 255, 255, 0.18);
-        background: rgba(0, 0, 0, 0.86);
-        color: #fff;
-        box-shadow: -28px 0 100px rgba(0, 0, 0, 0.78);
+        width: min(380px, 92vw);
+        padding-top: 0;
+        border-left: 1px solid var(--v-border-hi);
+        background: rgba(10, 10, 10, 0.94);
+        color: var(--v-label);
+        box-shadow: -1px 0 0 var(--v-border), -24px 0 60px rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(20px) saturate(150%);
+        -webkit-backdrop-filter: blur(20px) saturate(150%);
     }
 
     .playlist-head {
-        min-height: 68px;
-        border-bottom-color: rgba(255, 255, 255, 0.14);
+        min-height: 52px;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--v-border);
     }
 
     .playlist-title {
-        color: rgba(255, 255, 255, 0.82);
-        font-size: 16px;
-        font-weight: 700;
+        color: var(--v-label);
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0;
+        text-transform: none;
+    }
+
+    /* Row separator lines — Vercel table style */
+    .playlist-list::-webkit-scrollbar { width: 4px; }
+    .playlist-list::-webkit-scrollbar-thumb {
+        background: var(--v-border-hi);
+        border-radius: 0;
     }
 
     .playlist-item {
-        grid-template-columns: 38px minmax(0, 1fr);
-        min-height: 66px;
-        padding: 12px 20px;
-        border-bottom-color: rgba(255, 255, 255, 0.1);
-        color: #fff;
+        grid-template-columns: 32px minmax(0, 1fr);
+        min-height: 52px;
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--v-border);
+        color: var(--v-label);
+        border-radius: 0;
     }
 
     .playlist-item:hover {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--v-fill);
     }
 
     .playlist-item.is-current {
-        background: rgba(255, 255, 255, 0.16);
-        box-shadow: inset 3px 0 0 #fff;
+        background: var(--v-fill-hover);
+        /* Vercel active indicator: 1px accent line on left */
+        box-shadow: inset 2px 0 0 var(--v-accent);
     }
 
     .playlist-index {
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 13px;
+        color: var(--v-label-dim);
+        font-size: 11px;
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum" 1;
     }
 
     .playlist-name {
-        color: #fff;
-        font-size: 15px;
-        font-weight: 650;
+        color: var(--v-label);
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0;
+        text-transform: none;
     }
 
+    /* ── Drop overlay ── */
     .drop-overlay {
         inset: 0;
-        background: rgba(0, 0, 0, 0.9);
-        color: #fff;
-        font-size: clamp(42px, 8vw, 92px);
-        font-weight: 800;
+        border: 1px solid var(--v-border-hi);
+        background: rgba(0, 0, 0, 0.88);
+        color: var(--v-label);
+        font-size: clamp(28px, 5vw, 56px);
+        font-weight: 500;
+        letter-spacing: -0.02em;
     }
 
+    /* ── Show/hide states ── */
     .app-shell.has-media .top-bar,
-    .app-shell:not(.has-media) .top-bar {
-        width: 68px;
-    }
+    .app-shell:not(.has-media) .top-bar { width: 48px; }
 
     .app-shell:not(.has-media) .top-bar {
         opacity: 0;
         pointer-events: none;
-        transform: translateY(-14px) scale(0.96);
+        transform: translateY(-10px) scale(0.97);
     }
 
-    .app-shell:not(.has-media) #playlist-button {
-        display: none;
-    }
+    .app-shell:not(.has-media) #playlist-button { display: none; }
 
     .app-shell:not(.has-media) .bottom-bar {
         opacity: 0;
         pointer-events: none;
-        transform: translate(-50%, 24px) scale(0.98);
+        transform: translate(-50%, 18px) scale(0.98);
     }
 
+    /* ── Responsive ── */
     @media (max-width: 900px) {
         :root {
-            --top-safe: 86px;
-            --bottom-safe: 208px;
+            --top-safe: 80px;
+            --bottom-safe: 200px;
         }
 
         .top-bar {
             top: 12px;
-            min-height: 62px;
+            right: 12px;
+            width: 44px;
+            min-height: 44px;
         }
 
         .bottom-bar {
             bottom: 12px;
-            width: min(660px, calc(100vw - 24px));
-            min-height: 172px;
-            padding: 16px;
-            border-radius: 26px;
+            width: min(720px, calc(100vw - 24px));
+            min-height: 164px;
+            padding: 14px 16px;
         }
 
         .control-row {
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .control-cluster {
-            justify-content: center;
-        }
+        .control-cluster { justify-content: center; }
 
         .timeline {
-            grid-template-columns: 48px minmax(0, 1fr) 48px;
+            grid-template-columns: 42px minmax(0, 1fr) 42px;
             order: -1;
         }
 
-        .volume-group {
-            display: none;
-        }
+        .volume-group { display: none; }
     }
 
     @media (max-width: 560px) {
         :root {
-            --top-safe: 82px;
-            --bottom-safe: 220px;
+            --top-safe: 76px;
+            --bottom-safe: 210px;
         }
 
-        .top-bar {
-            right: 12px;
-            width: 68px;
-        }
+        .top-bar { right: 10px; }
 
         .bottom-bar {
-            width: calc(100vw - 20px);
-            border-radius: 24px;
+            width: calc(100vw - 18px);
+            padding: 12px 14px;
         }
 
         .icon-button,
         .transport-button {
-            width: 50px;
-            height: 50px;
-            min-width: 50px;
-            min-height: 50px;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            min-height: 40px;
         }
 
+        .transport-button { width: 44px; height: 44px; }
+
         .transport-button.primary {
-            width: 70px;
-            height: 70px;
+            width: 52px;
+            height: 52px;
         }
 
         .meta-row {
-            min-height: 18px;
             grid-template-columns: 1fr;
             text-align: center;
+            gap: 2px;
         }
 
-        .counter {
-            display: none;
-        }
+        .counter { display: none; }
+
+        .playlist-panel { width: 100vw; }
     }
 </style>
 </head>
