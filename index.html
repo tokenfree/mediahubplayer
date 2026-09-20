@@ -341,6 +341,19 @@
         letter-spacing: 0.08em;
     }
 
+    .logo-text {
+        margin-bottom: 24px;
+        color: var(--white);
+        font-size: clamp(28px, 4vw, 40px);
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: none;
+    }
+
+    .logo-highlight {
+        color: #E73573;
+    }
+
     .load-large {
         width: 100%;
         height: 52px;
@@ -1018,6 +1031,19 @@
         line-height: 1.08;
     }
 
+    .logo-text {
+        margin-bottom: 24px;
+        color: var(--label);
+        font-size: clamp(28px, 4vw, 40px);
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: none;
+    }
+
+    .logo-highlight {
+        color: #E73573;
+    }
+
     .load-large {
         height: 46px;
         border-radius: var(--radius-btn);
@@ -1540,6 +1566,32 @@
         text-transform: none;
     }
 
+    .logo-text {
+        margin-bottom: 24px;
+        color: var(--v-label);
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: none;
+    }
+
+    .logo-highlight {
+        color: #E73573;
+    }
+
+    .logo-text {
+        margin-bottom: 24px;
+        color: var(--v-label);
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: none;
+    }
+
+    .logo-highlight {
+        color: #E73573;
+    }
+
     /* ── Choose videos button — Vercel primary button ── */
     .load-large {
         width: min(280px, calc(100vw - 70px));
@@ -1866,6 +1918,516 @@
 
         .playlist-panel { width: 100vw; }
     }
+    /* ══════════════════════════════════════════════════════════
+       Anthropic-style layout layer
+       Layout, sizing, spacing and shape only. No color changes.
+       ══════════════════════════════════════════════════════════ */
+    :root {
+        --btn: 44px;                       /* one size for every control button */
+        --v-radius: 12px;                  /* buttons, thumbs, focus ring */
+        --bar-radius: 16px;                /* bars, video, panels */
+        --gutter: clamp(8px, 1vw, 14px);
+    }
+
+    /* ── Layout: three separate rows (queue button / video / controls) ── */
+    .app-shell {
+        display: grid;
+        grid-template-rows: minmax(0, 1fr) auto;
+        gap: var(--gutter);
+        height: 100vh;
+        min-height: 0;
+        padding: var(--gutter);
+        overflow: hidden;
+    }
+
+    @supports (height: 100dvh) {
+        .app-shell { height: 100dvh; }
+    }
+
+    .player-zone {
+        position: relative;
+        inset: auto;
+        min-height: 0;
+        padding: 0;
+        container-type: size;
+    }
+
+    /* largest 16:9 that fits its own row, capped so it never feels oversized */
+    .video-shell {
+        width: min(100cqw, calc(100cqh * 16 / 9));
+        max-width: none;
+        border-radius: var(--bar-radius);
+    }
+
+    /* ── Bars: sit in their own rows, never over the video ── */
+    .top-bar,
+    .bottom-bar {
+        position: relative;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        transform: none;
+        border-radius: var(--bar-radius);
+    }
+
+    .top-bar {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        z-index: 11;
+        width: 40px;
+        min-height: 40px;
+        padding: 4px;
+    }
+
+    .app-shell.has-media .top-bar,
+    .app-shell:not(.has-media) .top-bar { width: 40px; }
+
+    .top-actions { gap: 0; }
+
+    .bottom-bar {
+        justify-self: center;
+        width: min(1020px, 100%);
+        min-height: 0;
+        gap: 8px;
+        padding: 14px 20px 16px;
+    }
+
+    .app-shell:not(.has-media) .bottom-bar { transform: translateY(8px); }
+
+    /* control bar tint follows the current video (set live from JS) */
+    .bottom-bar { background: var(--bar-bg, rgba(10, 10, 10, 0.82)); }
+
+    .meta-row {
+        min-height: 0;
+        margin: 0;
+        padding: 0 4px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        padding-bottom: 12px;
+        gap: 12px;
+    }
+
+    .track-title { font-size: 13px; }
+    .counter,
+    .time-label  { font-size: 12px; }
+
+    .control-row { gap: clamp(14px, 2vw, 24px); }
+    .control-cluster { gap: 8px; }
+    .volume-group { gap: 10px; }
+
+    /* ── Buttons: one size, one radius, one icon size ── */
+    .icon-button,
+    .transport-button,
+    .transport-button.primary {
+        width: var(--btn);
+        height: var(--btn);
+        min-width: var(--btn);
+        min-height: var(--btn);
+        border-radius: var(--v-radius);
+    }
+
+    .icon,
+    .transport-button .icon,
+    .transport-button.primary .icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* the play triangle is optically off-center, nudge it */
+    .play-icon { transform: translateX(1px); }
+
+    /* ── Timeline and volume: rounded, comfortable to grab ── */
+    .timeline {
+        grid-template-columns: 46px minmax(0, 1fr) 46px;
+        gap: 12px;
+    }
+
+    input[type="range"] { height: 32px; }
+
+    #progress::-webkit-slider-runnable-track {
+        height: 4px;
+        border-radius: 999px;
+    }
+
+    #progress::-webkit-slider-thumb {
+        width: 16px;
+        height: 16px;
+        margin-top: -6px;
+        border-radius: 50%;
+    }
+
+    #progress::-moz-range-track,
+    #progress::-moz-range-progress {
+        height: 4px;
+        border-radius: 999px;
+    }
+
+    #progress::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+    }
+
+    .volume-track-wrap { height: 4px; border-radius: 999px; }
+    .volume-fill       { border-radius: 999px; }
+
+    /* ── Empty state ── */
+    .empty-panel {
+        border-radius: var(--bar-radius);
+        padding: 32px;
+    }
+
+    .load-large {
+        height: var(--btn);
+        border-radius: var(--v-radius);
+    }
+
+    /* ── Queue: floating sheet that matches the bars ── */
+    .playlist-panel {
+        top: 16px;
+        right: 16px;
+        bottom: 16px;
+        z-index: 12;
+        width: min(380px, calc(100vw - 32px));
+        border: 1px solid var(--v-border-hi);
+        border-radius: var(--bar-radius);
+        overflow: hidden;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+        transform: translateX(calc(100% + 32px));
+    }
+
+    .playlist-panel.is-open { transform: translateX(0); }
+
+    .playlist-head {
+        min-height: 60px;
+        padding: 0 8px 0 20px;
+    }
+
+    .playlist-item {
+        min-height: 56px;
+        padding: 10px 20px;
+    }
+
+    /* hide the floating queue button while the queue is open */
+    .app-shell:has(+ .playlist-panel.is-open) .top-bar {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    @media (max-width: 560px) {
+        .bottom-bar { padding: 12px 14px 14px; }
+    }
+
+    /* ══ Queue: static sidebar adjacent to the video, no overlap ══
+       On wide viewports the queue takes real space next to the video
+       instead of floating on top of it. The video area (sized via
+       container-query units on .player-zone) shrinks to fit as the
+       sidebar opens, so nothing overlaps. Narrow viewports keep the
+       original full-screen overlay behavior (defined earlier). */
+    @media (min-width: 561px) {
+        body { display: flex; }
+
+        .app-shell {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .playlist-panel {
+            position: relative;
+            inset: auto;
+            top: auto; right: auto; bottom: auto; left: auto;
+            flex: 0 0 auto;
+            width: 0;
+            height: 100vh;
+            margin: 0;
+            border-radius: 0;
+            box-shadow: none;
+            transform: none;
+            overflow: hidden;
+            transition: width 240ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @supports (height: 100dvh) {
+            .playlist-panel { height: 100dvh; }
+        }
+
+        .playlist-panel.is-open {
+            width: min(380px, 40vw);
+            transform: none;
+            box-shadow: -12px 0 40px rgba(0, 0, 0, 0.4);
+        }
+
+        /* keep the button hidden while the queue is open */
+        .app-shell:has(+ .playlist-panel.is-open) .top-bar {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+/* ══ Enhanced Control Container Buttons — Anthropic Design Guidelines ══ */
+    .bottom-bar {
+        --btn-secondary: 36px;
+        --btn-primary: 40px;
+        --btn-radius: 10px;
+    }
+
+    /* the cluster maintains proper height for the bar */
+    .bottom-bar .control-cluster { 
+        min-height: 48px;
+        gap: 10px;
+    }
+
+    /* Secondary buttons — improved visibility and aesthetics */
+    .bottom-bar .icon-button,
+    .bottom-bar .transport-button:not(.primary) {
+        width: var(--btn-secondary);
+        height: var(--btn-secondary);
+        min-width: var(--btn-secondary);
+        min-height: var(--btn-secondary);
+        border-radius: var(--btn-radius);
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 0.9);
+        box-shadow: 
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            0 2px 8px rgba(0, 0, 0, 0.2);
+        transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Primary button — enhanced visual hierarchy */
+    .bottom-bar .transport-button.primary {
+        width: var(--btn-primary);
+        height: var(--btn-primary);
+        min-width: var(--btn-primary);
+        min-height: var(--btn-primary);
+        border-radius: var(--btn-radius);
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 240, 240, 0.9) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        color: #0a0a0a;
+        box-shadow: 
+            inset 0 1px 0 rgba(255, 255, 255, 1),
+            0 4px 16px rgba(0, 0, 0, 0.3),
+            0 0 0 1px rgba(255, 255, 255, 0.1);
+        transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Icon sizing — better proportions */
+    .bottom-bar .icon,
+    .bottom-bar .transport-button:not(.primary) .icon {
+        width: 16px;
+        height: 16px;
+        stroke-width: 1.8;
+    }
+
+    .bottom-bar .transport-button.primary .icon { 
+        width: 18px; 
+        height: 18px;
+        stroke-width: 2;
+    }
+
+    /* Hover states — subtle but noticeable */
+    .bottom-bar .icon-button:hover,
+    .bottom-bar .transport-button:not(.primary):hover {
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+        border-color: rgba(255, 255, 255, 0.25);
+        box-shadow: 
+            inset 0 1px 0 rgba(255, 255, 255, 0.15),
+            0 4px 12px rgba(0, 0, 0, 0.25);
+        transform: translateY(-1px);
+    }
+
+    .bottom-bar .transport-button.primary:hover {
+        background: linear-gradient(145deg, #ffffff 0%, #f5f5f5 100%);
+        border-color: rgba(255, 255, 255, 0.6);
+        box-shadow: 
+            inset 0 1px 0 rgba(255, 255, 255, 1),
+            0 6px 20px rgba(0, 0, 0, 0.35),
+            0 0 0 1px rgba(255, 255, 255, 0.15);
+        transform: translateY(-1px);
+    }
+
+    /* Active states — tactile feedback */
+    .bottom-bar .icon-button:active,
+    .bottom-bar .transport-button:not(.primary):active {
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border-color: rgba(255, 255, 255, 0.1);
+        box-shadow: 
+            inset 0 2px 4px rgba(0, 0, 0, 0.2),
+            0 1px 2px rgba(0, 0, 0, 0.1);
+        transform: translateY(1px);
+    }
+
+    .bottom-bar .transport-button.primary:active {
+        background: linear-gradient(145deg, #e8e8e8 0%, #dddddd 100%);
+        border-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 
+            inset 0 2px 4px rgba(0, 0, 0, 0.15),
+            0 2px 6px rgba(0, 0, 0, 0.2);
+        transform: translateY(1px);
+    }
+
+    /* Disabled state */
+    .bottom-bar .icon-button:disabled,
+    .bottom-bar .transport-button:disabled {
+        opacity: 0.3;
+        transform: none;
+        cursor: not-allowed;
+    }
+
+    /* Queue button icon styling */
+    #playlist-button .icon {
+        width: 14px;
+        height: 14px;
+        stroke: currentColor;
+        fill: none;
+    }
+
+    /* Close button in playlist panel — same size as top button */
+    .playlist-head .icon-button {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        min-height: 32px;
+        border-radius: 0;
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        box-shadow: none;
+        transition: color 150ms ease, transform 150ms ease;
+    }
+
+    .playlist-head .icon-button:hover {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 1);
+        box-shadow: none;
+        transform: scale(1.1);
+    }
+
+    .playlist-head .icon-button:active {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.8);
+        box-shadow: none;
+        transform: scale(0.95);
+    }
+
+    .playlist-head .icon {
+        width: 20px;
+        height: 20px;
+        stroke-width: 2;
+    }
+/* Volume control — enhanced to match button aesthetics */
+    .bottom-bar .volume-track-wrap {
+        height: var(--btn-secondary);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: var(--btn-radius);
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+        box-shadow: 
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            0 2px 8px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .bottom-bar .volume-track-wrap:hover {
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+        border-color: rgba(255, 255, 255, 0.25);
+        box-shadow: 
+            inset 0 1px 0 rgba(255, 255, 255, 0.15),
+            0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .bottom-bar .volume-fill {
+        border-radius: 0;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    }
+
+    .bottom-bar #volume {
+        inset: 0;
+        height: 100%;
+    }
+
+    /* Progress slider — white styling */
+    #progress::-webkit-slider-runnable-track {
+        height: 4px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.9) var(--range, 0%), rgba(255, 255, 255, 0.2) var(--range, 0%));
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+    }
+
+    #progress::-webkit-slider-thumb {
+        width: 16px;
+        height: 16px;
+        margin-top: -6px;
+        border-radius: 50%;
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        transition: transform 120ms ease, box-shadow 120ms ease;
+    }
+
+    #progress:hover::-webkit-slider-thumb {
+        transform: scale(1.2);
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    #progress::-moz-range-track {
+        height: 4px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    #progress::-moz-range-progress {
+        height: 4px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    #progress::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Top-right button — plain icon without background */
+    .top-bar .icon-button {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        min-height: 32px;
+        border-radius: 0;
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 1);
+        box-shadow: none;
+        transform: scale(1.1);
+        transition: transform 150ms ease;
+    }
+
+    .top-bar .icon-button:hover {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 1);
+        box-shadow: none;
+        transform: scale(1.1);
+    }
+
+    .top-bar .icon-button:active {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.8);
+        box-shadow: none;
+        transform: scale(0.95);
+    }
+
+    .top-bar .icon {
+        width: 20px;
+        height: 20px;
+        stroke-width: 2;
+    }
 </style>
 </head>
 <body>
@@ -1874,12 +2436,9 @@
         <div class="top-actions">
             <button class="icon-button" id="playlist-button" type="button" aria-label="Playlist" title="Playlist" disabled>
                 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M8 6h13"></path>
-                    <path d="M8 12h13"></path>
-                    <path d="M8 18h13"></path>
-                    <path d="M3 6h1"></path>
-                    <path d="M3 12h1"></path>
-                    <path d="M3 18h1"></path>
+                    <path d="M3 6h18"></path>
+                    <path d="M3 12h18"></path>
+                    <path d="M3 18h18"></path>
                 </svg>
             </button>
         </div>
@@ -1892,6 +2451,7 @@
                 <video class="video-slot" playsinline preload="metadata"></video>
                 <div class="empty-state" id="empty-state">
                     <div class="empty-panel">
+                        <div class="logo-text">MediaHub <span class="logo-highlight">Player</span></div>
                         <button class="load-large" id="empty-load-button" type="button">Choose videos</button>
                     </div>
                 </div>
@@ -2020,6 +2580,54 @@
     };
 
     const getActiveVideo = () => videoEls[activeSlot];
+
+    /* ── Live control-bar tint from the current video frame ── */
+    const bottomBar  = document.querySelector(".bottom-bar");
+    const TINT_W = 32, TINT_H = 18;
+    const TINT_MAX_LUMA = 70;     // cap brightness so the light labels stay readable
+    const TINT_SMOOTHING = 0.15;  // 0..1, higher = faster colour changes
+    const tintCanvas = document.createElement("canvas");
+    tintCanvas.width = TINT_W;
+    tintCanvas.height = TINT_H;
+    const tintCtx = tintCanvas.getContext("2d", { willReadFrequently: true });
+    let tint = null, lastTintTime = 0;
+
+    const updateBarTint = (now) => {
+        requestAnimationFrame(updateBarTint);
+        if (now - lastTintTime < 90) return;
+        lastTintTime = now;
+
+        const v = getActiveVideo();
+        if (!videos.length) {
+            if (tint) { tint = null; bottomBar.style.removeProperty("--bar-bg"); }
+            return;
+        }
+        if (v.readyState < 2 || !v.videoWidth) return;
+
+        let data;
+        try {
+            tintCtx.drawImage(v, 0, 0, TINT_W, TINT_H);
+            data = tintCtx.getImageData(0, 0, TINT_W, TINT_H).data;
+        } catch { return; }
+
+        let r = 0, g = 0, b = 0;
+        const n = data.length / 4;
+        for (let i = 0; i < data.length; i += 4) { r += data[i]; g += data[i + 1]; b += data[i + 2]; }
+        r /= n; g /= n; b /= n;
+
+        const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        if (luma > TINT_MAX_LUMA) { const k = TINT_MAX_LUMA / luma; r *= k; g *= k; b *= k; }
+
+        if (!tint) tint = [r, g, b];
+        else {
+            tint[0] += (r - tint[0]) * TINT_SMOOTHING;
+            tint[1] += (g - tint[1]) * TINT_SMOOTHING;
+            tint[2] += (b - tint[2]) * TINT_SMOOTHING;
+        }
+        bottomBar.style.setProperty("--bar-bg",
+            `rgba(${Math.round(tint[0])}, ${Math.round(tint[1])}, ${Math.round(tint[2])}, 0.9)`);
+    };
+    requestAnimationFrame(updateBarTint);
 
     const setRangeFill = (input, percent) => {
         input.style.setProperty("--range", `${Math.max(0, Math.min(100, percent))}%`);
