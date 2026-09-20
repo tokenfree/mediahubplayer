@@ -1996,19 +1996,41 @@
 
     .app-shell:not(.has-media) .bottom-bar { transform: translateY(8px); }
 
-    /* control bar tint follows the current video (set live from JS) */
-    .bottom-bar { background: var(--bar-bg, rgba(10, 10, 10, 0.82)); }
+    .bottom-bar { background: rgba(10, 10, 10, 0.82); }
+
+    /* The divider above the controls follows the current video's color. */
+    .video-color-capsule {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        opacity: 0.35;
+        overflow: hidden;
+        border-radius: 999px;
+        background: var(--capsule-color, #292929);
+        filter: saturate(0.7);
+        pointer-events: none;
+    }
 
     .meta-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+        text-align: left;
         min-height: 0;
         margin: 0;
         padding: 0 4px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        border-bottom: 0;
         padding-bottom: 12px;
-        gap: 12px;
+        gap: 16px;
     }
 
     .track-title { font-size: 13px; }
+    .meta-row .counter {
+        display: block;
+        justify-self: end;
+        min-width: 5ch;
+        text-align: right;
+    }
     .counter,
     .time-label  { font-size: 12px; }
 
@@ -2354,7 +2376,7 @@
         height: 4px;
         border-radius: 999px;
         background: linear-gradient(90deg, rgba(255, 255, 255, 0.9) var(--range, 0%), rgba(255, 255, 255, 0.2) var(--range, 0%));
-        box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+        box-shadow: none;
     }
 
     #progress::-webkit-slider-thumb {
@@ -2464,6 +2486,7 @@
         <div class="meta-row">
             <div class="track-title" id="track-title"></div>
             <div class="counter" id="counter"></div>
+            <div class="video-color-capsule" id="video-color-capsule" aria-hidden="true"></div>
         </div>
         <div class="control-row">
             <div class="control-cluster">
@@ -2581,10 +2604,10 @@
 
     const getActiveVideo = () => videoEls[activeSlot];
 
-    /* ── Live control-bar tint from the current video frame ── */
-    const bottomBar  = document.querySelector(".bottom-bar");
+    /* ── Live capsule color from the current video frame ── */
+    const colorCapsule = document.getElementById("video-color-capsule");
     const TINT_W = 32, TINT_H = 18;
-    const TINT_MAX_LUMA = 70;     // cap brightness so the light labels stay readable
+    const TINT_MAX_LUMA = 180;    // retain vivid color within the decorative capsule
     const TINT_SMOOTHING = 0.15;  // 0..1, higher = faster colour changes
     const tintCanvas = document.createElement("canvas");
     tintCanvas.width = TINT_W;
@@ -2592,14 +2615,14 @@
     const tintCtx = tintCanvas.getContext("2d", { willReadFrequently: true });
     let tint = null, lastTintTime = 0;
 
-    const updateBarTint = (now) => {
-        requestAnimationFrame(updateBarTint);
+    const updateCapsuleTint = (now) => {
+        requestAnimationFrame(updateCapsuleTint);
         if (now - lastTintTime < 90) return;
         lastTintTime = now;
 
         const v = getActiveVideo();
         if (!videos.length) {
-            if (tint) { tint = null; bottomBar.style.removeProperty("--bar-bg"); }
+            if (tint) { tint = null; colorCapsule.style.removeProperty("--capsule-color"); }
             return;
         }
         if (v.readyState < 2 || !v.videoWidth) return;
@@ -2624,10 +2647,10 @@
             tint[1] += (g - tint[1]) * TINT_SMOOTHING;
             tint[2] += (b - tint[2]) * TINT_SMOOTHING;
         }
-        bottomBar.style.setProperty("--bar-bg",
-            `rgba(${Math.round(tint[0])}, ${Math.round(tint[1])}, ${Math.round(tint[2])}, 0.9)`);
+        colorCapsule.style.setProperty("--capsule-color",
+            `rgb(${Math.round(tint[0])}, ${Math.round(tint[1])}, ${Math.round(tint[2])})`);
     };
-    requestAnimationFrame(updateBarTint);
+    requestAnimationFrame(updateCapsuleTint);
 
     const setRangeFill = (input, percent) => {
         input.style.setProperty("--range", `${Math.max(0, Math.min(100, percent))}%`);
@@ -2676,6 +2699,7 @@
         const cur = has && currentIndex >= 0 ? videos[currentIndex] : null;
         appShell.classList.toggle("has-media", has);
         trackTitle.textContent = cur ? cur.name : "";
+        trackTitle.title = cur ? cur.name : "";
         counter.textContent    = cur ? `${currentIndex + 1} / ${videos.length}` : "";
         emptyState.classList.toggle("is-hidden", has);
         setControlsEnabled(has);
